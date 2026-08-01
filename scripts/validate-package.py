@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate Humanizer's portable package surfaces without external dependencies."""
+"""Validate Humanizer Chinese's portable package surfaces without external dependencies."""
 
 from __future__ import annotations
 
