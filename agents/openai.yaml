@@ -1,4 +1,4 @@
 interface:
-  display_name: "Humanizer"
-  short_description: "Remove AI writing patterns from prose"
-  default_prompt: "Use $humanizer to make this text sound natural while preserving its meaning and facts."
+  display_name: "Humanizer Chinese"
+  short_description: "去除中文文本中的AI写作痕迹"
+  default_prompt: "用 $humanizer-chinese 去掉这段中文的AI味,保留原意和事实。"

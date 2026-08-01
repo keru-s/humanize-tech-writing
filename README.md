@@ -1,230 +1,176 @@
-# Humanizer
+# Humanizer Chinese(中文去 AI 味)
 
-[![skills.sh installs](https://skills.sh/b/blader/humanizer)](https://skills.sh/blader/humanizer)
+去除中文文本中的 AI 生成痕迹,让文字读起来像真人写的。这是 [blader/humanizer](https://github.com/blader/humanizer) 的中文本土化 fork:原版 33 条英文模式(基于 Wikipedia "Signs of AI writing")经逐条迁移分析后,重组为 **36 条中文 AI 写作模式**,并补充了中文社区共识、中文 AIGC 检测研究(北京语言大学 CCL 2023、HC3 语料库)与实战词表。
 
-A portable agent skill that removes signs of AI-generated writing from text, making it sound more natural and human. It is plain Markdown, so it can run in any harness that supports skill-style instructions.
+整个 skill 是纯 Markdown(`SKILL.md`),可在任何支持 skill 式指令的 agent 环境中运行。
 
-## Installation
+## 与英文原版的差异
+
+- **25 条模式直接迁移**(换中文词表和例句):意义拔高、模糊归因、同义词轮换、谄媚语气等。
+- **6 条模式本土化改造**:
+  - em dash 零容忍 → 中文破折号是规范标点,只拦滥用与错排(§27)
+  - 英文 AI 词表(delve/tapestry)→ 中文 AI 高频词与互联网黑话(赋能/抓手/闭环,§9)
+  - -ing 伪分析 → 句尾"体现了/彰显了"升华小句(§3)
+  - 被动语态 → 欧化"被"字句与翻译腔(§16),中文无主句不误伤
+  - Title Case → 小标题过度包装与编号泛滥(§21)
+  - 弯引号规则反转 → 弯引号是简体中文规范,改盯全角半角混用(§31)
+- **2 条不适用已移除**:弯引号即 AI(中文相反)、连字符复合词(中文无此构词)。
+- **新增中文特有模式**:宏大时代开场、"不是X而是Y"二分句式、排比对仗堆砌(AI 对偶句密度为人类 6 倍,虎嗅实测)、讲义腔路标词(AI 连词密度为人类 3 倍,CCL 2023)、万能动词公文腔(余光中)、均质书面腔、模板段落、假互动引流、骑墙不表态等。
+- **新增「模型指纹速查」**:DeepSeek R1 / GPT 系 / Claude / 文心 / Kimi / 豆包 / 通义各自的 AI 味重心。
+- **新增「防过度纠偏」**:编造第一人称经历、统一假口语腔、故意加错别字等"装人味"翻车模式——装人味是新的 AI 味。
+
+## 安装
 
 ### Skills CLI
 
-Install globally with the cross-agent skills CLI so Humanizer is available in every project:
+```bash
+npx skills add jiji262/humanizer-chinese --global
+```
+
+更新:
 
 ```bash
-npx skills add blader/humanizer --global
+npx skills update humanizer-chinese --global
 ```
 
-Update an existing install:
+安装到所有已配置的 agent:
 
 ```bash
-npx skills update humanizer --global
+npx skills add jiji262/humanizer-chinese --global --agent '*'
 ```
 
-To install globally into every supported agent harness:
+### Claude Code 插件
+
+```
+/plugin marketplace add jiji262/humanizer-chinese
+/plugin install humanizer-chinese@humanizer-chinese
+```
+
+之后通过 `/humanizer-chinese:humanizer-chinese` 调用。
+
+### 手动安装
+
+运行时产物只有 `SKILL.md`,放进你的 harness 期望的 skill 目录即可:
 
 ```bash
-npx skills add blader/humanizer --global --agent '*'
+git clone https://github.com/jiji262/humanizer-chinese.git /path/to/your/skills/humanizer-chinese
 ```
 
-To target one configured harness, pass its agent name:
-
-```bash
-npx skills add blader/humanizer --global --agent <agent-name>
-```
-
-Omit `--global` for a project-local install that can be committed and shared with collaborators. Start a new agent session or reload skills after installation.
-
-### Claude Code plugin
-
-Claude Code users can also install Humanizer as a plugin:
+## 用法
 
 ```
-/plugin marketplace add blader/humanizer
-/plugin install humanizer@humanizer
-```
+/humanizer-chinese
 
-The skill is then invoked as `/humanizer:humanizer`.
-
-### Manual
-
-Any agent harness can use the skill directly because the runtime artifact is `SKILL.md`. Install it wherever your harness expects skill directories, or copy `SKILL.md` into an existing skill folder.
-
-For example:
-
-```bash
-git clone https://github.com/blader/humanizer.git /path/to/your/skills/humanizer
-```
-
-Or, if you already have this repo cloned:
-
-```bash
-mkdir -p /path/to/your/skills/humanizer
-cp SKILL.md /path/to/your/skills/humanizer/
-```
-
-## Usage
-
-Invoke the skill however your agent harness exposes installed skills. Common forms include a slash command or a direct request:
-
-```
-/humanizer
-
-[paste your text here]
+[粘贴你的文本]
 ```
 
 ```
-Please humanize this text: [your text]
+帮我把这段文字去掉AI味:[你的文本]
 ```
 
-Point it at a file and the skill rewrites it in place:
+指向文件,原地改写:
 
 ```
-Humanize the prose in docs/launch-post.md
+把 docs/发布文案.md 的AI味去掉
 ```
 
-### Voice Calibration
+### 语气样本校准
 
-To match your personal writing style, provide a sample of your own writing:
+提供你自己的写作样本,skill 会分析你的句长、用词、标点习惯并模仿,而不是输出千篇一律的"干净稿":
 
 ```
-/humanizer
+/humanizer-chinese
 
-Here's a sample of my writing for voice matching:
-[paste 2-3 paragraphs of your own writing]
+这是我自己的写作样本,用于语气匹配:
+[贴 2-3 段你自己写的文字]
 
-Now humanize this text:
-[paste AI text to humanize]
+现在humanize这段文本:
+[贴要处理的AI文本]
 ```
 
-The skill will analyze your sentence rhythm, word choices, and quirks, then apply them to the rewrite instead of producing generic "clean" output.
+## 36 条模式(含改前/改后示例)
 
-## Overview
+### 一、内容模式
 
-Based on [Wikipedia's "Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) guide, maintained by WikiProject AI Cleanup. This comprehensive guide comes from observations of thousands of instances of AI-generated text.
+| # | 模式 | 改前 | 改后 |
+|---|------|------|------|
+| 1 | **意义拔高与宏大叙事** | "标志着重要里程碑,奠定坚实基础" | 直接陈述事实 |
+| 2 | **宏大时代开场** | "随着人工智能的不断发展…" | 从具体事实或场景切入 |
+| 3 | **句尾升华小句** | ",体现了…彰显了…" | 删掉升华从句 |
+| 4 | **宣传腔与导游词** | "坐落于…的璀璨明珠" | "是…的一座城镇" |
+| 5 | **模糊归因** | "有专家指出""研究表明(无出处)" | 给具体出处,或删 |
+| 6 | **知名度堆砌** | "被多家权威媒体报道,粉丝超50万" | 留一条有语境的具体引用 |
+| 7 | **套路化"挑战与展望"** | "尽管面临挑战…必将蓬勃前行" | 只留有依据的具体问题 |
+| 8 | **万能升华结尾** | "未来可期,让我们拭目以待" | 停在最后一个具体事实 |
 
-The skill also includes a final "obviously AI generated" audit pass and a second rewrite, to catch lingering AI-isms in the first draft.
+### 二、语言模式
 
-Rewrites follow a no-fabrication rule: they never add facts, names, dates, or citations that aren't in the source text. Specificity has to come from the source or the author, not from the rewrite.
+| # | 模式 | 改前 | 改后 |
+|---|------|------|------|
+| 9 | **AI 高频词与互联网黑话** | "赋能/抓手/闭环/底层逻辑" | 说清到底做了什么 |
+| 10 | **讲义腔路标词** | "首先…其次…最后…综上所述" | 靠内容自然承接 |
+| 11 | **二分否定强调** | "不是X,而是Y;不仅是X,更是Y" | 直接说结论,一篇最多一次 |
+| 12 | **排比对仗堆砌** | 三连排比、工整对偶 | 两项优于三项 |
+| 13 | **系动词回避** | "作为…坐拥…扮演着…角色" | 用朴素的"是/有" |
+| 14 | **同义词轮换** | "主人公/主角/核心人物"轮换 | 该重复就重复 |
+| 15 | **伪跨度与伪穷举** | "从X到Y""包括A、B、C等" | 直接点名主题 |
+| 16 | **欧化翻译腔** | "将被自动保存""作为一个…" | 意念被动、省代词 |
+| 17 | **万能动词公文腔** | "对…进行分析""作出调整" | "分析了""调整" |
+| 18 | **填充短语与过度对冲** | "或许可能在一定程度上" | 限定词最多留一个 |
+| 19 | **均质书面腔** | 通篇"购买/使用/如何",零语气词 | 语体合适时掺口语说法 |
 
-### Key Insight from Wikipedia
+### 三、结构与节奏模式
 
-> "LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely result that applies to the widest variety of cases."
+| # | 模式 | 改前 | 改后 |
+|---|------|------|------|
+| 20 | **模板段落与均匀节奏** | 每段"中心句+论据+小结"踩格子 | 详略不均,长短句交替 |
+| 21 | **小标题过度包装** | "破局之道:双轮驱动"三级编号 | 朴素标题,砍编号层级 |
+| 22 | **路标句与标题后热身** | "话不多说,以下是你需要知道的" | 直接上内容 |
+| 23 | **人造金句与断句造势** | "没有A。没有B。旧规则,就此终结。" | 正常句式,少量强调 |
+| 24 | **格言公式** | "好问题比好答案更值钱" | 还原成具体判断 |
+| 25 | **假坦诚开场钩子** | "说实话,""你没看错" | 删表演,直接说 |
+| 26 | **以变更为锚的写作** | "新增此函数是为了替代旧方案" | 描述现状,不叙述变更 |
 
-## 33 Patterns Detected (with Before/After Examples)
+### 四、标点与排版模式
 
-### Content Patterns
+| # | 模式 | 改前 | 改后 |
+|---|------|------|------|
+| 27 | **破折号滥用与错排** | "X——也就是说——Y"、单字宽— | 低频、排版正确(不全禁) |
+| 28 | **引号强调癖** | 给"努力""坚持"加引号 | 只为反讽、专名、引用加 |
+| 29 | **加粗滥用与加粗列表** | "- **高效**:处理速度提升" | 改连贯散文 |
+| 30 | **emoji 装饰** | "🚀 发布阶段:✅ 下一步:" | 删掉,靠文字表达层次 |
+| 31 | **全角半角混用** | "每组50人, 差异显著." | 中文全角,一致排版 |
 
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 1 | **Significance inflation** | "marking a pivotal moment in the evolution of..." | "was established in 1989 as part of a wider decentralization" |
-| 2 | **Notability name-dropping** | "cited in NYT, BBC, FT, and The Hindu" | Trim the list; keep only sourced context |
-| 3 | **Superficial -ing analyses** | "symbolizing... reflecting... showcasing..." | Remove, or keep only what the source supports |
-| 4 | **Promotional language** | "nestled within the breathtaking region" | "is a town in the Gonder region" |
-| 5 | **Vague attributions** | "Experts believe it plays a crucial role" | Name a real source or cut the claim |
-| 6 | **Formulaic challenges** | "Despite challenges... continues to thrive" | Keep the sourced facts; cut the boosterism |
+### 五、沟通与残留模式
 
-### Language Patterns
+| # | 模式 | 改前 | 改后 |
+|---|------|------|------|
+| 32 | **对话残留** | "以下是…希望对您有帮助!" | 整句删除 |
+| 33 | **知识截止与臆测填空** | "信息有限,她为人低调,很可能…" | 说清未知,不编背景 |
+| 34 | **谄媚语气** | "这是一个非常好的问题!" | 直接进入内容 |
+| 35 | **假互动与引流结尾** | "你觉得呢?点赞关注~" | 删模板互动,留具体内容 |
+| 36 | **骑墙不表态** | "各有利弊,见仁见智" | 选边给理由,或给适用条件 |
 
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 7 | **AI vocabulary** | "Actually... additionally... testament... landscape... showcasing" | "also... remain common" |
-| 8 | **Copula avoidance** | "serves as... features... boasts" | "is... has" |
-| 9 | **Negative parallelisms / tailing negations** | "It's not just X, it's Y", "..., no guessing" | State the point directly |
-| 10 | **Rule of three** | "innovation, inspiration, and insights" | Use natural number of items |
-| 11 | **Synonym cycling** | "protagonist... main character... central figure... hero" | "protagonist" (repeat when clearest) |
-| 12 | **False ranges** | "from the Big Bang to dark matter" | List topics directly |
-| 13 | **Passive voice / subjectless fragments** | "No configuration file needed" | Name the actor when it helps clarity |
+## 核心设计
 
-### Style Patterns
+- **无捏造规则**:改写不得加入原文没有的事实、人名、数字、日期、引语——尤其不得虚构第一人称经历。具体性必须来自原文或作者。
+- **语域与文体门**:百科/技术/公文的中立平实就是正确的人声,不注入"我觉得";人味只给需要声音的文体。
+- **聚簇判定**:单个特征不定罪(真人也用破折号和排比),多项特征密集共现才算。附中文特有假阳性清单(公文规范用语、四字成语、港台「」、文学破折号)。
+- **防过度纠偏**:统一假口语腔、故意错别字、堆口头禅是"装人味"——比 AI 味更尴尬,专设自查清单。
+- **双重审计循环**:初稿 → 三问审计("哪里还一眼AI""有没有编造""有没有过度纠偏")→ 终稿 → 朗读终审。
 
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 14 | **Em/en dashes** | "institutions—not the people—yet this continues—" | Cut them: periods, commas, colons, or parentheses |
-| 15 | **Boldface overuse** | "**OKRs**, **KPIs**, **BMC**" | "OKRs, KPIs, BMC" |
-| 16 | **Inline-header lists** | "**Performance:** Performance improved" | Convert to prose |
-| 17 | **Title Case Headings** | "Strategic Negotiations And Partnerships" | "Strategic negotiations and partnerships" |
-| 18 | **Emojis** | "🚀 Launch Phase: 💡 Key Insight:" | Remove emojis |
-| 19 | **Curly quotes** | `said “the project”` | `said "the project"` |
-| 26 | **Hyphenated word pairs** | “cross-functional, data-driven, client-facing” | Drop hyphens on common word pairs |
-| 27 | **Persuasive authority tropes** | "At its core, what matters is..." | State the point directly |
-| 28 | **Signposting announcements** | "Let's dive in", "Here's what you need to know" | Start with the content |
-| 29 | **Fragmented headers** | "## Performance" + "Speed matters." | Let the heading do the work |
-| 30 | **Diff-anchored writing** | "This function was added to replace..." | Describe what it does, not what changed |
-| 31 | **Manufactured punchlines / staccato drama** | "It had no preference. No prior. No nostalgia." | Use varied sentence lengths and concrete claims |
-| 32 | **Aphorism formulas** | "Symmetry is the language of trust" | Replace the formula with the actual claim |
-| 33 | **Conversational rhetorical openers** | "Honestly? It depends..." | Remove the fake-candid setup |
+## 参考
 
-### Communication Patterns
+- [blader/humanizer](https://github.com/blader/humanizer) — 上游项目
+- [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) / [中文维基百科:AI 生成文的特徵](https://zh.wikipedia.org/wiki/Wikipedia:AI%E7%94%9F%E6%88%90%E6%96%87%E7%9A%84%E7%89%B9%E5%BE%B5)
+- 北京语言大学《人工智能生成语言与人类语言对比研究》(CCL 2023)
+- HC3 语料库(arXiv 2301.07597)
+- 余光中《怎样改进英式中文——论中文的常态与变态》
 
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 20 | **Chatbot artifacts** | "I hope this helps! Let me know if..." | Remove entirely |
-| 21 | **Cutoff disclaimers** | "While details are limited in available sources..." | Find sources or remove |
-| 22 | **Sycophantic tone** | "Great question! You're absolutely right!" | Respond directly |
+## 版本历史
 
-### Filler and Hedging
+- **1.0.0** - 首个中文版:fork 自 blader/humanizer v2.9.1,33 条英文模式经逐条迁移分析(25 条直迁、6 条改造、2 条移除)重组为 36 条中文模式;新增语域与文体门、模型指纹速查、中文假阳性清单、防过度纠偏清单;所有例句中文化。
 
-| # | Pattern | Before | After |
-|---|---------|--------|-------|
-| 23 | **Filler phrases** | "In order to", "Due to the fact that" | "To", "Because" |
-| 24 | **Excessive hedging** | "could potentially possibly" | "may" |
-| 25 | **Generic conclusions** | "The future looks bright" | Specific plans or facts |
-
-## Full Example
-
-*(Illustration note: the rewrite below adds specifics, like the month and the neighborhoods, that stand in for details the author would supply. In a real session those come from the user; the skill asks rather than invents.)*
-
-**Before (AI-sounding):**
-> I recently spent five unforgettable days in Lisbon, and let me tell you — this city completely stole my heart. From the moment I arrived, I knew I was somewhere truly special.
->
-> Nestled along the banks of the Tagus River, Lisbon stands as a vibrant testament to Portugal's enduring spirit, where rich history and modern energy intertwine at every turn. Yes, the famous hills are challenging — my legs certainly felt it! — but every climb rewards you with breathtaking, panoramic views that make it all worthwhile.
->
-> No trip would be complete without riding the iconic Tram 28, winding through the city's most historic neighborhoods. And the food? Simply divine. The original pastéis de nata at Pastéis de Belém are a beloved national treasure, and savoring one still warm was a moment I will never forget.
->
-> But what truly makes Lisbon special isn't just the sights — it's the feeling. Wander a few steps off the main squares and you'll discover a quieter, more authentic side: sun-drenched alleys, charming tiled facades, and friendly locals going about their daily lives, inviting you to slow down and savor every moment.
->
-> Of course, the must-see São Jorge Castle offers stunning views over the rooftops below. The queues can be long, but the experience is absolutely worth it for any history buff or curious traveler.
->
-> Would I go back? Absolutely. Lisbon isn't just a place to visit — it's a place to fall in love with, again and again. If you're dreaming of your next getaway, this is one destination that promises memories to last a lifetime. ✨
-
-**After (Humanized):**
-> I spent five days in Lisbon last October and still have mixed feelings about it. Beautiful, yes. Also harder on the knees than anyone warned me.
->
-> The hills are the whole story and somehow never make the brochures. My hotel was up in Alfama, which photographs beautifully and translates, in practice, to climbing what felt like a six-story staircase every time I wanted coffee. By the second day my calves had opinions. I started planning each walk around which way was downhill, which is a strange way to see a city but probably an honest one.
->
-> Everyone says to ride Tram 28, so I did, wedged against a stranger's backpack for forty minutes while three tour groups filmed the same corner. I would walk the route next time, or go before breakfast. The custard tarts, though, earn the fuss. I had one at a plain little place in Graça, still warm, and for about thirty seconds I understood why people build trips around pastry.
->
-> What I did not expect was how quiet the city gets away from the main squares. Two blocks uphill from any plaza it turns into laundry lines, chipped tile, open windows, and old men watching football with the sound turned up. That is the Lisbon I keep thinking about, not the castle.
->
-> The castle is fine. The view is great, the queue is long, and I spent more time shuffling toward the entrance than looking at anything once I got inside. If I had only two days, I would trade it for an afternoon of getting lost.
->
-> I would go back, but in spring and with better shoes. Lisbon does not bend over backward to make things easy for you. I think I liked that, even when my legs disagreed.
-
-## References
-
-- [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) - Primary source
-- [WikiProject AI Cleanup](https://en.wikipedia.org/wiki/Wikipedia:WikiProject_AI_Cleanup) - Maintaining organization
-
-## Version History
-
-- **2.9.1** - Improved distribution and portability: removed nonportable frontmatter and tool preapprovals, made global installation the documented default, added package validation, and removed the duplicated long-form example from the runtime prompt. No change to the 33 patterns.
-- **2.9.0** - Added a no-fabrication rule: rewrites may not invent facts, names, dates, or citations not present in the source, and every example that modeled invented specifics was re-cut to use only source information (fixes #187). Replaced paragraph-count parity with an information-over-shape rule, made a user's voice sample outrank the em dash ban, and added invocation modes (pasted text / file / embedded). No change to the 33 patterns.
-- **2.8.3** - Moved the skill version from the unsupported top-level frontmatter key to `metadata.version` for Agent Skills and Claude compatibility. No change to the 33 patterns.
-- **2.8.2** - Replaced the full before/after example with a first-person Lisbon trip recap. The after now keeps the same topic, perspective, and rough length as the before while removing the AI tells without becoming clipped or slogan-like. No change to the 33 patterns.
-- **2.8.1** - Added cross-agent installation docs, optional Claude Code plugin packaging, and a compact secondhand-text false-positive guard. No change to the 33 patterns.
-- **2.8.0** - Added style/cadence patterns #31-33 for manufactured punchlines, aphorism formulas, and conversational rhetorical openers; expanded #20 to catch offer-to-continue chatbot closers. 33 patterns total.
-- **2.7.0** - Added pattern #30 (diff-anchored writing); made em/en dashes a hard cut rather than "overuse"; expanded #21 to cover speculative gap-filling ("maintains a low profile"). 30 patterns total.
-- **2.6.0** - Cleanup pass: consolidated the duplicated workflow sections, gated the personality guidance to content where voice is wanted, removed the model-fingerprinting subsection, and condensed the worked example. No change to the 29 patterns.
-- **2.5.1** - Added a passive-voice / subjectless-fragment rule, raising the total to 29 patterns
-- **2.5.0** - Added patterns for persuasive framing, signposting, and fragmented headers; expanded negative parallelisms to cover tailing negations; tightened wording around em dash overuse; fixed frontmatter wording to use "filler phrases"
-- **2.4.0** - Added voice calibration: match the user's personal writing style from samples
-- **2.3.0** - Added pattern #25: hyphenated word pair overuse
-- **2.2.0** - Added a final "obviously AI generated" audit + second-pass rewrite prompts
-- **2.1.1** - Fixed pattern #18 example (curly quotes vs straight quotes)
-- **2.1.0** - Added before/after examples for all 24 patterns
-- **2.0.0** - Complete rewrite based on raw Wikipedia article content
-- **1.0.0** - Initial release
-
-## License
+## 许可
 
 MIT

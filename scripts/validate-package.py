@@ -42,20 +42,22 @@ versions = {skill_version, readme_version, str(PLUGIN.get("version", ""))}
 if len(versions) != 1:
     raise SystemExit(f"Version mismatch: {sorted(versions)}")
 
+PATTERN_COUNT = 36
+
 pattern_numbers = [
     int(number)
     for number in re.findall(r"(?m)^### ([0-9]+)\. ", SKILL)
 ]
-if pattern_numbers != list(range(1, 34)):
-    raise SystemExit(f"Expected patterns 1-33, found {pattern_numbers}")
+if pattern_numbers != list(range(1, PATTERN_COUNT + 1)):
+    raise SystemExit(f"Expected patterns 1-{PATTERN_COUNT}, found {pattern_numbers}")
 
 readme_numbers = {
     int(number) for number in re.findall(r"(?m)^\| ([0-9]+) \|", README)
 }
-if readme_numbers != set(range(1, 34)):
-    raise SystemExit("README pattern table must contain patterns 1-33")
+if readme_numbers != set(range(1, PATTERN_COUNT + 1)):
+    raise SystemExit(f"README pattern table must contain patterns 1-{PATTERN_COUNT}")
 
 if len(SKILL.splitlines()) > 500:
     raise SystemExit("SKILL.md exceeds the 500-line portability budget")
 
-print(f"Humanizer package v{skill_version} is valid")
+print(f"Humanizer Chinese package v{skill_version} is valid")
