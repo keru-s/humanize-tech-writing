@@ -130,19 +130,17 @@ The Skill is intended to run repeatedly in coding agents. Avoid diff noise:
 
 ## Prompt design
 
-Keep `skills/humanize-tech-writing/SKILL.md` compact enough that the model can identify the important rules quickly. Prefer a small number of clear sections such as:
+Keep `skills/humanize-tech-writing/SKILL.md` compact enough that the model can identify the important rules quickly. This Skill is mostly reference material, so a flat single file is acceptable while the branch-specific sections remain short; split only when a branch grows enough that most invocations would otherwise load irrelevant material.
 
-1. scope
-2. priority
-3. hard constraints
-4. document-type rules
-5. editing preferences
-6. project workflow
-7. final check
+Treat frontmatter `description` as an always-loaded context pointer: keep it short, trigger-focused, and free of body details. It should say when the Skill applies, not summarize every rule the Skill contains.
 
-Do not recreate long pattern taxonomies or low-value word lists unless they demonstrably improve behavior.
+Prefer positive target behavior in style guidance. Reserve prohibitions for hard guardrails or cases where the positive behavior would be ambiguous, and pair a necessary prohibition with the desired behavior when practical.
+
+Keep each meaning in one authoritative place. Do not restate the same rule across terminology, translation, metaphor, and final-check sections; use short completion criteria to verify behavior without re-explaining it.
 
 Keep few-shot examples sparse and representative. Prefer one or two examples for a behavior class, then state the general rule. Do not enumerate every observed bad phrase as an example; that encourages lexical substitution instead of semantic judgment.
+
+Do not recreate long pattern taxonomies or low-value word lists unless they demonstrably improve behavior.
 
 Style guidance should remain preference-level where appropriate. For example, active voice, main-point-first structure, list usage, and metaphor reduction can improve technical writing, but existing ADR/RFC templates, established terminology, or domain conventions may take precedence.
 
