@@ -1,7 +1,7 @@
 ---
 name: humanize-tech-writing
 description: |
-  改写中文技术文档、README、设计说明、JavaDoc、docstring 和代码注释，
+  改写中文技术文档、README、设计说明、API/文档注释和代码注释，
   去掉 AI 生造词、空泛工程黑话、翻译腔和模板化表达，让文字准确、直接、
   易于工程师理解。保留事实、正式技术术语、项目术语、标识符、字面量以及
   MUST/SHOULD/MAY 等强弱语义。在编写、修改或审阅项目技术文字时使用。
@@ -19,7 +19,7 @@ metadata:
 主要处理：
 - README、开发指南、故障说明、API 和配置说明
 - 架构说明、设计文档、ADR、RFC
-- JavaDoc、docstring
+- API / 文档注释，例如 JavaDoc、docstring、JSDoc/TSDoc、KDoc、Rust doc comments、Go declaration comments、C# XML docs 等
 - 行内注释、块注释、TODO、兼容性和 workaround 说明
 - PR description、changelog、migration guide 等变更说明
 
@@ -101,9 +101,11 @@ metadata:
 
 优先写清行为、约束、接口关系、取舍、决策和有来源的理由。自由结构段落可以先写主要结论，再补原因和细节；已有 ADR/RFC 模板、规范章节顺序或团队约定不要为了“主结论提前”而重排。
 
-### JavaDoc、docstring、API 文档
+### API / 文档注释
 
 这里经常需要说明 what / contract，不要套用“注释只解释 why”。根据接口需要记录参数、返回值、异常、nullability、units/format、side effects、thread-safety/concurrency、blocking behavior、ordering、lifecycle、前置条件和边界条件。
+
+这些规则适用于各种语言的文档注释，例如 JavaDoc、Python docstring、JSDoc/TSDoc、KDoc、Rust doc comments、Go declaration comments、C# XML documentation comments 等，不限定具体语法或语言。
 
 代码或类型系统已经完整表达的信息可以省略；公开契约需要明确时应保留。
 
@@ -207,7 +209,7 @@ TODO 应说明剩余工作或解除临时方案的条件；没有依据时不要
 - 有没有改变 MUST/SHOULD/MAY、可能性、频率、边界或其他强弱语义？
 - 有没有误改标识符、字面量、API 名称或正式术语？
 - 有没有因为词形而误杀正常工程术语？
-- JavaDoc/docstring 是否保留必要 contract？
+- API / 文档注释是否保留必要 contract，而没有因具体语言或语法形式被漏掉？
 - 行内注释是否只是在重复代码、记录 bug 排查过程，或保存已经失去价值的变更历史？
 - 如果注释来自历史问题，是否只保留今天仍然有效的约束和必要原因？
 - 有没有空泛黑话可以在不新增事实的前提下改成直接表达？
