@@ -1,4 +1,4 @@
 interface:
   display_name: "Humanize Tech Writing"
-  short_description: "去掉中文技术文档和代码注释中的 AI 生造词与工程黑话"
-  default_prompt: "用 $humanize-tech-writing 改写这段中文技术文字，保留技术含义、正式术语和项目术语。"
+  short_description: "让中文技术文档和代码注释更直接、自然，并保护技术语义"
+  default_prompt: "用 $humanize-tech-writing 检查这段中文技术文字：去掉明显的 AI 生造表达和空泛黑话，保留事实、正式术语、项目契约和强弱语义，不补写未知实现。"
