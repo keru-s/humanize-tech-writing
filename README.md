@@ -65,9 +65,11 @@ Skill 不会为了“把话说具体”而脑补实现。
 
 重点是行为、约束、接口关系、取舍和有来源的设计理由。已有团队模板或章节顺序应保留。
 
-### JavaDoc / docstring / API 文档
+### API / 文档注释
 
 这里需要说明公开 contract，不能简单套用“注释只解释为什么”。根据接口需要保留：参数、返回值、异常、nullability、units、side effects、thread-safety、blocking behavior、ordering、lifecycle 和边界条件。
+
+这类注释不限于某一种语言，例如 JavaDoc、Python docstring、JSDoc/TSDoc、KDoc、Rust doc comments、Go declaration comments、C# XML documentation comments 等都属于这个范围。
 
 ### 行内注释 / 块注释
 
@@ -83,6 +85,8 @@ User user = userService.getUser(id);
 代码已经表达了动作，这条注释通常可以直接删除。
 
 不要为了“解释为什么”而猜一个设计理由。
+
+长期代码注释也不应该记录 bug 排查过程、尝试过的方案或完整修复故事。若排查过程中发现了今天仍然成立的约束，只保留这个约束和必要原因；详细过程应留在 issue、PR、commit、ADR 或设计文档中。
 
 ### PR / changelog / migration guide
 
@@ -112,6 +116,8 @@ Skill 使用 plain language，优先普通词、具体动词和项目已有术�
 # 安装
 
 推荐使用 [`skills`](https://github.com/vercel-labs/skills) CLI 安装，不需要手动下载或复制 `SKILL.md`。
+
+仓库把可安装的 Skill 放在 `skills/humanize-tech-writing/` 下，因此 CLI 会安装 Skill 包本身，而不会把 `.github/workflows`、仓库级 README 或其他维护文件一起复制进目标项目。
 
 ## 安装到当前项目
 
@@ -161,7 +167,7 @@ npx skills add keru-s/humanize-tech-writing --list
 
 ## 手动安装
 
-只有在不方便使用 `npx skills` 时，才需要手动把 Skill 放到 Agent 对应的项目级 Skill 目录。例如 Codex：
+只有在不方便使用 `npx skills` 时，才需要手动把整个 `skills/humanize-tech-writing/` 目录放到 Agent 对应的项目级 Skill 目录。例如 Codex：
 
 ```text
 your-project/
@@ -169,10 +175,12 @@ your-project/
 └── .agents/
     └── skills/
         └── humanize-tech-writing/
-            └── SKILL.md
+            ├── SKILL.md
+            └── agents/
+                └── openai.yaml
 ```
 
-运行时核心仍然是 [`SKILL.md`](./SKILL.md)。
+运行时核心是 [`skills/humanize-tech-writing/SKILL.md`](./skills/humanize-tech-writing/SKILL.md)。
 
 ## 建议的 AGENTS.md 触发规则
 
@@ -181,8 +189,8 @@ Skill 负责“怎么改”，项目指令负责“什么时候调用”。目�
 ```md
 ## Technical writing
 
-When creating or modifying Chinese technical documentation, JavaDoc/docstrings,
-or code comments, use the `humanize-tech-writing` skill before finishing.
+When creating or modifying Chinese technical documentation or code comments,
+including API/documentation comments, use the `humanize-tech-writing` skill before finishing.
 
 Preserve technical meaning, identifiers, literals, and established project terminology.
 ```
@@ -228,7 +236,7 @@ Preserve technical meaning, identifiers, literals, and established project termi
 
 - README / docs
 - ADR / RFC / 架构和设计说明
-- JavaDoc / docstring / API 文档
+- API / 文档注释（例如 JavaDoc、docstring、JSDoc/TSDoc、KDoc 等）
 - 行内和块注释
 - TODO / workaround / 兼容性说明
 - 配置 / 运维说明
@@ -251,5 +259,5 @@ Preserve technical meaning, identifiers, literals, and established project termi
 
 # 版本历史
 
-- **2.1.0** — 根据工程使用场景重构 Skill：增加“具体化必须有来源”、modality / uncertainty 保护和 minimal editing；按 README/ADR、JavaDoc/docstring、行内注释、变更文档区分规则；删除词缀判罪、固定 18 类模式和规则数量维护契约。
+- **2.1.0** — 根据工程使用场景重构 Skill：增加“具体化必须有来源”、modality / uncertainty 保护和 minimal editing；按技术文档、API/文档注释、行内注释、变更文档区分规则；删除词缀判罪、固定 18 类模式和规则数量维护契约。
 - **2.0.0** — 从通用中文 Humanizer 改为技术写作专项 Skill，重点处理 AI 生造词、工程黑话、抽象名词化、技术表达不具体以及无效代码注释。
