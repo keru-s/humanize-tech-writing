@@ -78,15 +78,17 @@ Do not strengthen or weaken a requirement merely to make prose smoother.
 
 ### Preserve established terminology
 
-A suffix, word shape, or metaphorical origin is never enough evidence that a term should be removed. Terms such as `幂等性`, `可观测性`, `序列化`, `复杂度`, `调用链路`, `回源`, `背压`, `熔断`, `心跳`, `冷启动`, and `配置漂移` may be correct engineering language.
+A suffix, word shape, or metaphorical origin is never enough evidence that a term should be removed. Terms such as `幂等性`, `可观测性`, `序列化`, `复杂度`, `调用链路`, `回源`, `背压`, `熔断`, `心跳`, and `冷启动` may be correct engineering language.
 
 Prefer terminology in this order:
 
 1. explicit user terminology
 2. repository glossary/instructions/design docs
 3. stable terms in code and interfaces
-4. established industry terminology
+4. established industry terminology in the current language
 5. plain Chinese
+
+The existence of an English term is not, by itself, evidence that a literal Chinese translation should be preserved. A translated expression such as `配置漂移` should still be evaluated unless the project explicitly adopts it or the Chinese usage is genuinely stable and precise.
 
 ### Prefer literal technical facts over decorative metaphors
 
@@ -94,12 +96,7 @@ Technical writing should make the real objects, actions, states, and relationshi
 
 Do not use a hard “metaphor count” threshold. Instead ask whether a reader must translate rhetoric back into literal technical meaning before they can understand the sentence.
 
-Preserve established project and industry terms even if they originated as metaphors. For non-standard expressions, prefer literal wording when the metaphor adds only drama, compression, or a sense of sophistication. Pay particular attention to:
-
-- war, competition, legal/forensic, financial, or body imagery used for ordinary engineering actions
-- internet or promotional wording such as `实锤` or `重磅`
-- compressed labels such as `写路径收口`, `漂移可观测`, or vague `人工兜底` that hide the actual actor or action
-- stacked metaphors that obscure causality or boundaries
+Preserve established project and industry terms even if they originated as metaphors. For non-standard expressions, prefer literal wording when the metaphor adds only drama, compression, or a sense of sophistication. Pay particular attention to rhetorical imagery, promotional wording, compressed labels, and stacked metaphors that obscure the actual actor, action, causality, or boundary.
 
 When expanding a compressed label, use only behavior supported by the surrounding text or project evidence. Never invent the literal implementation just to remove a metaphor.
 
@@ -136,6 +133,8 @@ Keep `skills/humanize-tech-writing/SKILL.md` compact enough that the model can i
 7. final check
 
 Do not recreate long pattern taxonomies or low-value word lists unless they demonstrably improve behavior.
+
+Keep few-shot examples sparse and representative. Prefer one or two examples for a behavior class, then state the general rule. Do not enumerate every observed bad phrase as an example; that encourages lexical substitution instead of semantic judgment.
 
 Style guidance should remain preference-level where appropriate. For example, active voice, main-point-first structure, list usage, and metaphor reduction can improve technical writing, but existing ADR/RFC templates, established terminology, or domain conventions may take precedence.
 
