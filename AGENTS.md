@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repository.
 
 ## What this repo is
 
-`humanize-tech-writing` is a portable Agent Skill for **Chinese technical writing**. It edits project documentation and code comments to remove AI-coined terminology, vague abstraction, translationese, canned AI phrasing, and low-value comments while preserving technical meaning.
+`humanize-tech-writing` is a portable Agent Skill for **Chinese technical writing**. It edits project documentation and code comments to remove AI-coined terminology, vague abstraction, translationese, canned AI phrasing, metaphor-heavy packaging, and low-value comments while preserving technical meaning.
 
 The repository is intentionally narrower than upstream `humanizer-chinese`. It is designed for engineering artifacts such as README files, design docs, ADR/RFC content, API and documentation comments, API/configuration docs, inline/block comments, and change-oriented technical docs.
 
@@ -64,6 +64,12 @@ Never make an abstract sentence look better by inventing a plausible retry count
 
 Examples in `SKILL.md` and `README.md` must follow the same rule. An “after” example must not silently add facts that were absent from the “before” example.
 
+### Preserve fact granularity
+
+Conciseness must not collapse or remove independent facts that already exist in the source. Preserve concrete data, conditions, constraints, exceptions, and distinct factual claims unless the user explicitly asks for summarization.
+
+Prefer removing evaluative or decorative wording over replacing several concrete facts with one vague summary. A rewrite should still allow a reader to recover the source's independent factual points.
+
 ### Preserve semantics
 
 Do not change identifiers, API fields, protocol names, CLI commands, configuration keys, errors, paths, URLs, fixed strings, or other program semantics unless the user explicitly asks.
@@ -78,15 +84,29 @@ Do not strengthen or weaken a requirement merely to make prose smoother.
 
 ### Preserve established terminology
 
-A suffix or word shape is never enough evidence that a term is AI-generated. Terms such as `幂等性`, `可观测性`, `序列化`, `复杂度`, `调用链路`, `回源`, `背压`, and `熔断` may be correct engineering language.
+A suffix, word shape, or metaphorical origin is never enough evidence that a term should be removed. Terms such as `幂等性`, `可观测性`, `序列化`, `复杂度`, `调用链路`, `回源`, `背压`, `熔断`, `心跳`, and `冷启动` may be correct engineering language.
 
 Prefer terminology in this order:
 
 1. explicit user terminology
 2. repository glossary/instructions/design docs
 3. stable terms in code and interfaces
-4. established industry terminology
+4. established industry terminology in the current language
 5. plain Chinese
+
+The existence of an English term is not, by itself, evidence that a literal Chinese translation should be preserved. A translated expression such as `配置漂移` should still be evaluated unless the project explicitly adopts it or the Chinese usage is genuinely stable and precise.
+
+### Prefer literal technical facts over decorative metaphors
+
+Technical writing should make the real objects, actions, states, and relationships easy to recover without an extra decoding step.
+
+Do not use a hard “metaphor count” threshold. Instead ask whether a reader must translate rhetoric back into literal technical meaning before they can understand the sentence.
+
+Preserve established project and industry terms even if they originated as metaphors. For non-standard expressions, prefer literal wording when the metaphor adds only drama, compression, or a sense of sophistication. Pay particular attention to rhetorical imagery, promotional wording, compressed labels, and stacked metaphors that obscure the actual actor, action, causality, or boundary.
+
+Before rewriting a suspected metaphor, try to produce a more literal version that is equally accurate and does not lose information. If that cannot be done, do not change the wording merely because its origin is metaphorical.
+
+When expanding a compressed label, use only behavior supported by the surrounding text or project evidence. Never invent the literal implementation just to remove a metaphor.
 
 ### Document-type awareness
 
@@ -110,19 +130,19 @@ The Skill is intended to run repeatedly in coding agents. Avoid diff noise:
 
 ## Prompt design
 
-Keep `skills/humanize-tech-writing/SKILL.md` compact enough that the model can identify the important rules quickly. Prefer a small number of clear sections such as:
+Keep `skills/humanize-tech-writing/SKILL.md` compact enough that the model can identify the important rules quickly. This Skill is mostly reference material, so a flat single file is acceptable while the branch-specific sections remain short; split only when a branch grows enough that most invocations would otherwise load irrelevant material.
 
-1. scope
-2. priority
-3. hard constraints
-4. document-type rules
-5. editing preferences
-6. project workflow
-7. final check
+Treat frontmatter `description` as an always-loaded context pointer: keep it short, trigger-focused, and free of body details. It should say when the Skill applies, not summarize every rule the Skill contains.
+
+Prefer positive target behavior in style guidance. Reserve prohibitions for hard guardrails or cases where the positive behavior would be ambiguous, and pair a necessary prohibition with the desired behavior when practical.
+
+Keep each meaning in one authoritative place. Do not restate the same rule across terminology, translation, metaphor, and final-check sections; use short completion criteria to verify behavior without re-explaining it.
+
+Keep few-shot examples sparse and representative. Prefer one or two examples for a behavior class, then state the general rule. Do not enumerate every observed bad phrase as an example; that encourages lexical substitution instead of semantic judgment.
 
 Do not recreate long pattern taxonomies or low-value word lists unless they demonstrably improve behavior.
 
-Style guidance should remain preference-level where appropriate. For example, active voice, main-point-first structure, and list usage can improve technical writing, but existing ADR/RFC templates or domain conventions may take precedence.
+Style guidance should remain preference-level where appropriate. For example, active voice, main-point-first structure, list usage, and metaphor reduction can improve technical writing, but existing ADR/RFC templates, established terminology, or domain conventions may take precedence.
 
 ## Project-level use
 

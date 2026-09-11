@@ -1,8 +1,8 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
   "name": "humanize-tech-writing",
-  "description": "改写中文技术文档和代码注释，减少 AI 生造词、空泛工程黑话和模板化表达，同时保护事实、正式术语、项目契约和强弱语义。",
-  "version": "2.1.0",
+  "description": "改写中文技术文档和代码注释，减少 AI 生造词、空泛工程黑话、英文逐词直译腔、需要二次解码的隐喻和模板化表达，同时保护事实、正式术语、项目契约和强弱语义。",
+  "version": "2.2.0",
   "author": {
     "name": "keru-s",
     "url": "https://github.com/keru-s"
