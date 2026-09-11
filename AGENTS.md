@@ -4,97 +4,150 @@ Guidance for AI coding agents working in this repository.
 
 ## What this repo is
 
-`humanize-tech-writing` is a portable Agent Skill for **Chinese technical writing**. It rewrites project documentation and code comments to remove AI-coined terminology, vague engineering jargon, unnecessary abstraction, translationese, and comments that merely restate code.
+`humanize-tech-writing` is a portable Agent Skill for **Chinese technical writing**. It edits project documentation and code comments to remove AI-coined terminology, vague abstraction, translationese, canned AI phrasing, and low-value comments while preserving technical meaning.
 
-This repository is intentionally narrower than its upstream `humanizer-chinese`: it is for README files, design docs, ADR/RFC content, API/configuration docs, JavaDoc/docstrings, and code comments. It is not a general-purpose prose humanizer.
+The repository is intentionally narrower than upstream `humanizer-chinese`. It is designed for engineering artifacts such as README files, design docs, ADR/RFC content, JavaDoc/docstrings, API/configuration docs, code comments, and change-oriented technical docs.
 
 The runtime artifact is `SKILL.md`. There is no build step.
 
-## Product principles
+## Product priorities
 
-The order of priority is:
+Preserve this order of priority when editing the Skill:
 
-1. technical correctness
-2. consistency with project terminology
-3. concrete and directly understandable language
-4. natural Chinese engineering writing
-5. brevity
+1. technical meaning and factual correctness
+2. project terminology and contracts
+3. modality, uncertainty, and boundary conditions
+4. clarity and concreteness
+5. natural, concise technical writing
 
-Never improve “human-ness” at the cost of technical precision.
-
-Do not treat all specialized words as AI jargon. Established technical terms and project-specific terms must be preserved when supported by repository context.
+Style improvements must not weaken the first three items.
 
 ## Key files
 
-- `SKILL.md` — source of truth for the skill behavior and 18 rule categories.
-- `README.md` — user-facing description, examples, project-level installation, usage, and version history.
+- `SKILL.md` — source of truth for Skill behavior.
+- `README.md` — user-facing scope, examples, installation, usage, and version history.
 - `agents/openai.yaml` — OpenAI Agent Skills display metadata.
 - `.claude-plugin/plugin.json` — Claude Code plugin manifest.
 - `.claude-plugin/marketplace.json` — Claude Code marketplace entry.
-- `scripts/validate-package.py` — dependency-free consistency checks.
+- `scripts/validate-package.py` — dependency-free repository consistency checks.
 - `.github/workflows/validate.yml` — CI validation.
 
 ## Maintenance contract
 
-`SKILL.md`, `README.md`, Agent metadata, and plugin metadata must stay in sync.
-
-### Rule count
-
-The skill currently defines **18 numbered rules** (`PATTERN_COUNT` in `scripts/validate-package.py`). If rules are added, removed, or renumbered, update together:
-
-- `SKILL.md`
-- README rule table
-- `PATTERN_COUNT`
-- any cross-references
-
-Keep numbering stable unless the change deliberately restructures the skill.
+`SKILL.md`, `README.md`, Agent metadata, and plugin metadata must stay consistent.
 
 ### Version
 
 The current version must match in:
 
 - `SKILL.md` → `metadata.version`
-- `README.md` → latest entry in `版本历史`
+- `README.md` → newest entry in `版本历史`
 - `.claude-plugin/plugin.json` → `version`
 
-Keep version metadata portable; do not add harness-specific frontmatter keys to `SKILL.md` unless the Agent Skills format requires them.
+Do not create a maintenance contract around a fixed number of writing rules. The Skill should be organized for model comprehension, not for preserving a taxonomy inherited from upstream.
 
 ### Naming
 
-The canonical skill/package name is `humanize-tech-writing`.
+The canonical Skill/package name is `humanize-tech-writing`.
 
-Do not reintroduce `humanizer-chinese` as the active package name. It may appear only when documenting upstream history or attribution.
+`humanizer-chinese` may appear only in upstream history or attribution. Do not reintroduce it as the active package name.
 
-### Technical-writing behavior
+## Behavioral invariants
 
-When changing the skill prompt, preserve these invariants:
+When changing the prompt, preserve these rules.
 
-- Never invent facts, causes, metrics, constraints, or design intent.
-- Preserve identifiers, API fields, protocol names, CLI commands, configuration keys, errors, paths, URLs, and fixed strings unless the user explicitly asks to change them.
-- Prefer existing project terminology over generic “plain language”.
-- Do not blindly remove established terms such as `幂等`, `回源`, `透传`, `背压`, `熔断`, or `最终一致性` when they are technically accurate.
-- Treat words like `失败` as normal Chinese; flag unnecessary constructions such as `失败态` or `失败承接` when they hide the actual behavior.
-- Code comments should explain non-obvious reasons, constraints, or behavior, not translate the code line by line.
-- Do not add change-history comments where Git history belongs.
+### Evidence before specificity
 
-### Examples
+Concrete implementation details must come from the text being edited or project evidence such as code, tests, API/schema definitions, docs, ADR/RFC content, issues, PR context, or explicit user input.
 
-Examples should be technically plausible but must remain generic. Avoid examples whose “improved” version introduces details that were not present in the original unless the surrounding text explicitly says those details must come from real project context.
+Never make an abstract sentence look better by inventing a plausible retry count, error code, trigger, metric, design rationale, compatibility claim, or other behavior.
 
-### Project-level use
+Examples in `SKILL.md` and `README.md` must follow the same rule. An “after” example must not silently add facts that were absent from the “before” example.
 
-The README documents the recommended Codex layout:
+### Preserve semantics
+
+Do not change identifiers, API fields, protocol names, CLI commands, configuration keys, errors, paths, URLs, fixed strings, or other program semantics unless the user explicitly asks.
+
+Preserve modality and uncertainty, including distinctions such as:
+
+- MUST / SHOULD / MAY
+- 必须 / 应该 / 可以 / 可能 / 不得
+- always / sometimes / never
+
+Do not strengthen or weaken a requirement merely to make prose smoother.
+
+### Preserve established terminology
+
+A suffix or word shape is never enough evidence that a term is AI-generated. Terms such as `幂等性`, `可观测性`, `序列化`, `复杂度`, `调用链路`, `回源`, `背压`, and `熔断` may be correct engineering language.
+
+Prefer terminology in this order:
+
+1. explicit user terminology
+2. repository glossary/instructions/design docs
+3. stable terms in code and interfaces
+4. established industry terminology
+5. plain Chinese
+
+### Document-type awareness
+
+Do not apply one comment rule to every technical artifact.
+
+- README / ADR / RFC / design docs: behavior, constraints, decisions, trade-offs, supported rationale.
+- JavaDoc / docstring / API docs: public contract, parameters, returns, exceptions, nullability, units, side effects, thread-safety, blocking, ordering, lifecycle, boundaries as needed.
+- Inline / block comments: non-obvious constraints, invariants, compatibility, concurrency/ordering, supported rationale, workaround conditions.
+- PR / changelog / migration docs: change history is expected and useful.
+
+“Comments should explain why” is mainly a heuristic for inline comments. Never invent a reason to satisfy that heuristic.
+
+### Minimal editing
+
+The Skill is intended to run repeatedly in coding agents. Avoid diff noise:
+
+- edit only text with a real clarity/style problem
+- keep nearby correct prose unchanged
+- preserve repository templates and unrelated structure
+- do not rename the same technical object for variety
+
+## Prompt design
+
+Keep `SKILL.md` compact enough that the model can identify the important rules quickly. Prefer a small number of clear sections such as:
+
+1. scope
+2. priority
+3. hard constraints
+4. document-type rules
+5. editing preferences
+6. project workflow
+7. final check
+
+Do not recreate long pattern taxonomies or low-value word lists unless they demonstrably improve behavior.
+
+Style guidance should remain preference-level where appropriate. For example, active voice, main-point-first structure, and list usage can improve technical writing, but existing ADR/RFC templates or domain conventions may take precedence.
+
+## Project-level use
+
+For a consuming repository, keep the `AGENTS.md` trigger short. It decides **when** to invoke this Skill; `SKILL.md` contains **how** to edit.
+
+Recommended snippet:
+
+```md
+## Technical writing
+
+When creating or modifying Chinese technical documentation, JavaDoc/docstrings,
+or code comments, use the `humanize-tech-writing` skill before finishing.
+
+Preserve technical meaning, identifiers, literals, and established project terminology.
+```
+
+Recommended Codex layout:
 
 ```text
 .agents/skills/humanize-tech-writing/SKILL.md
 ```
 
-It also recommends a small `AGENTS.md` trigger rule so the skill is applied when Chinese technical docs or code comments are created or modified. Keep this distinction clear:
-
-- project instructions decide **when** to apply the skill
-- `SKILL.md` decides **how** to edit the text
-
 ## Validation
+
+The local validator checks repository-owned consistency only. Do not hard-code a custom blacklist of Agent Skills frontmatter keys; format/schema validity belongs to the relevant Agent Skills or harness validator.
 
 Before publishing, run:
 
@@ -104,8 +157,6 @@ npx skills add . --list
 claude plugin validate .
 ```
 
-If a tool is unavailable locally, CI should still exercise the package checks.
-
 ## Upstream attribution
 
-This project is derived from `jiji262/humanizer-chinese`, which in turn builds on `blader/humanizer`. Keep the upstream attribution in `README.md` and preserve the MIT license notice as required by the existing license.
+This project is derived from `jiji262/humanizer-chinese`, which in turn builds on `blader/humanizer`. Keep upstream attribution in `README.md` and preserve the existing MIT license notice.
