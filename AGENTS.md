@@ -64,6 +64,12 @@ Never make an abstract sentence look better by inventing a plausible retry count
 
 Examples in `SKILL.md` and `README.md` must follow the same rule. An “after” example must not silently add facts that were absent from the “before” example.
 
+### Preserve fact granularity
+
+Conciseness must not collapse or remove independent facts that already exist in the source. Preserve concrete data, conditions, constraints, exceptions, and distinct factual claims unless the user explicitly asks for summarization.
+
+Prefer removing evaluative or decorative wording over replacing several concrete facts with one vague summary. A rewrite should still allow a reader to recover the source's independent factual points.
+
 ### Preserve semantics
 
 Do not change identifiers, API fields, protocol names, CLI commands, configuration keys, errors, paths, URLs, fixed strings, or other program semantics unless the user explicitly asks.
@@ -97,6 +103,8 @@ Technical writing should make the real objects, actions, states, and relationshi
 Do not use a hard “metaphor count” threshold. Instead ask whether a reader must translate rhetoric back into literal technical meaning before they can understand the sentence.
 
 Preserve established project and industry terms even if they originated as metaphors. For non-standard expressions, prefer literal wording when the metaphor adds only drama, compression, or a sense of sophistication. Pay particular attention to rhetorical imagery, promotional wording, compressed labels, and stacked metaphors that obscure the actual actor, action, causality, or boundary.
+
+Before rewriting a suspected metaphor, try to produce a more literal version that is equally accurate and does not lose information. If that cannot be done, do not change the wording merely because its origin is metaphorical.
 
 When expanding a compressed label, use only behavior supported by the surrounding text or project evidence. Never invent the literal implementation just to remove a metaphor.
 
