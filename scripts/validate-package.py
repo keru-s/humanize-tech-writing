@@ -9,11 +9,12 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
-SKILL = (ROOT / "SKILL.md").read_text()
+SKILL_DIR = ROOT / "skills" / "humanize-tech-writing"
+SKILL = (SKILL_DIR / "SKILL.md").read_text()
 README = (ROOT / "README.md").read_text()
 PLUGIN = json.loads((ROOT / ".claude-plugin" / "plugin.json").read_text())
 MARKETPLACE = json.loads((ROOT / ".claude-plugin" / "marketplace.json").read_text())
-OPENAI = (ROOT / "agents" / "openai.yaml").read_text()
+OPENAI = (SKILL_DIR / "agents" / "openai.yaml").read_text()
 
 CANONICAL_NAME = "humanize-tech-writing"
 
@@ -26,7 +27,7 @@ def require(match: re.Match[str] | None, message: str) -> re.Match[str]:
 
 frontmatter = require(
     re.match(r"\A---\n(.*?)\n---\n", SKILL, re.DOTALL),
-    "SKILL.md must start with YAML frontmatter",
+    "skills/humanize-tech-writing/SKILL.md must start with YAML frontmatter",
 ).group(1)
 
 skill_name = require(
@@ -60,7 +61,7 @@ if len(plugins) != 1 or plugins[0].get("name") != CANONICAL_NAME:
     raise SystemExit("marketplace plugin entry does not match the canonical skill name")
 
 if f"${CANONICAL_NAME}" not in OPENAI:
-    raise SystemExit("agents/openai.yaml default prompt must reference the canonical skill name")
+    raise SystemExit("skills/humanize-tech-writing/agents/openai.yaml default prompt must reference the canonical skill name")
 
 if len(SKILL.splitlines()) > 300:
     raise SystemExit("SKILL.md exceeds the 300-line prompt budget")
