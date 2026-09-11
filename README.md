@@ -111,11 +111,57 @@ Skill 使用 plain language，优先普通词、具体动词和项目已有术�
 
 # 安装
 
-运行时核心是 [`SKILL.md`](./SKILL.md)。
+推荐使用 [`skills`](https://github.com/vercel-labs/skills) CLI 安装，不需要手动下载或复制 `SKILL.md`。
 
-## Codex：放进项目中长期生效
+## 安装到当前项目
 
-把 Skill 放进项目的 `.agents/skills`：
+在目标项目根目录执行：
+
+```bash
+npx skills add keru-s/humanize-tech-writing
+```
+
+CLI 会发现仓库中的 `humanize-tech-writing` Skill，并让你选择要安装到哪些 Agent。
+
+如果只想安装到 Codex，可以直接指定：
+
+```bash
+npx skills add keru-s/humanize-tech-writing -a codex
+```
+
+需要跳过交互确认时加 `-y`：
+
+```bash
+npx skills add keru-s/humanize-tech-writing -a codex -y
+```
+
+项目级安装是默认行为。对于 Codex，Skill 会安装到当前项目可发现的 Skill 目录中，适合跟项目一起使用。
+
+## 全局安装
+
+如果希望所有项目都能使用这个 Skill，加 `-g`：
+
+```bash
+npx skills add keru-s/humanize-tech-writing -a codex -g
+```
+
+也可以不指定 Agent，让 CLI 交互选择已检测到的 Agent：
+
+```bash
+npx skills add keru-s/humanize-tech-writing -g
+```
+
+## 查看而不安装
+
+可以先确认 CLI 能正确发现 Skill：
+
+```bash
+npx skills add keru-s/humanize-tech-writing --list
+```
+
+## 手动安装
+
+只有在不方便使用 `npx skills` 时，才需要手动把 Skill 放到 Agent 对应的项目级 Skill 目录。例如 Codex：
 
 ```text
 your-project/
@@ -126,9 +172,7 @@ your-project/
             └── SKILL.md
 ```
 
-可以通过 subtree、submodule，或项目初始化脚本复制该目录。
-
-项目级 Skill 跟 Git 仓库一起走，团队成员和不同 Codex 会话可以使用同一套规则。
+运行时核心仍然是 [`SKILL.md`](./SKILL.md)。
 
 ## 建议的 AGENTS.md 触发规则
 
@@ -147,11 +191,11 @@ Preserve technical meaning, identifiers, literals, and established project termi
 
 ## 其他 Agent
 
-仓库使用标准 `SKILL.md` 结构。对于支持 Agent Skills 的工具，把整个目录放进对应的项目级 Skill 目录即可。
+`npx skills` 支持多个 Agent。安装时不传 `-a` 可以交互选择目标 Agent，也可以重复使用 `-a` 指定多个 Agent。
 
 ## Claude Code 插件
 
-仓库保留 Claude Code plugin manifest：
+仓库保留 Claude Code plugin manifest，因此也可以通过 Claude Code plugin 安装：
 
 ```text
 /plugin marketplace add keru-s/humanize-tech-writing
