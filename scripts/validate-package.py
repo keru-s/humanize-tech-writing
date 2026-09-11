@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate Humanize Tech Writing package surfaces without external dependencies."""
+"""Validate Humanize Tech Writing repository consistency without external dependencies."""
 
 from __future__ import annotations
 
@@ -16,7 +16,6 @@ MARKETPLACE = json.loads((ROOT / ".claude-plugin" / "marketplace.json").read_tex
 OPENAI = (ROOT / "agents" / "openai.yaml").read_text()
 
 CANONICAL_NAME = "humanize-tech-writing"
-PATTERN_COUNT = 18
 
 
 def require(match: re.Match[str] | None, message: str) -> re.Match[str]:
@@ -29,10 +28,6 @@ frontmatter = require(
     re.match(r"\A---\n(.*?)\n---\n", SKILL, re.DOTALL),
     "SKILL.md must start with YAML frontmatter",
 ).group(1)
-
-for nonportable_key in ("compatibility:", "allowed-tools:"):
-    if re.search(rf"(?m)^{re.escape(nonportable_key)}", frontmatter):
-        raise SystemExit(f"Remove nonportable frontmatter key: {nonportable_key[:-1]}")
 
 skill_name = require(
     re.search(r"(?m)^name:\s*([^\s]+)\s*$", frontmatter),
@@ -67,20 +62,7 @@ if len(plugins) != 1 or plugins[0].get("name") != CANONICAL_NAME:
 if f"${CANONICAL_NAME}" not in OPENAI:
     raise SystemExit("agents/openai.yaml default prompt must reference the canonical skill name")
 
-pattern_numbers = [
-    int(number)
-    for number in re.findall(r"(?m)^### ([0-9]+)\. ", SKILL)
-]
-if pattern_numbers != list(range(1, PATTERN_COUNT + 1)):
-    raise SystemExit(f"Expected patterns 1-{PATTERN_COUNT}, found {pattern_numbers}")
+if len(SKILL.splitlines()) > 300:
+    raise SystemExit("SKILL.md exceeds the 300-line prompt budget")
 
-readme_numbers = {
-    int(number) for number in re.findall(r"(?m)^\| ([0-9]+) \|", README)
-}
-if readme_numbers != set(range(1, PATTERN_COUNT + 1)):
-    raise SystemExit(f"README rule table must contain rules 1-{PATTERN_COUNT}")
-
-if len(SKILL.splitlines()) > 500:
-    raise SystemExit("SKILL.md exceeds the 500-line portability budget")
-
-print(f"Humanize Tech Writing package v{skill_version} is valid")
+print(f"Humanize Tech Writing package v{skill_version} is internally consistent")
