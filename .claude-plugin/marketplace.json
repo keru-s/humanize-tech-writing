@@ -1,18 +1,18 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace-manifest.json",
-  "name": "humanizer-chinese",
+  "name": "humanize-tech-writing",
   "owner": {
-    "name": "jiji262",
-    "url": "https://github.com/jiji262"
+    "name": "keru-s",
+    "url": "https://github.com/keru-s"
   },
-  "description": "The humanizer-chinese skill, installable as a Claude Code plugin.",
+  "description": "The humanize-tech-writing skill, installable as a Claude Code plugin.",
   "plugins": [
     {
-      "name": "humanizer-chinese",
+      "name": "humanize-tech-writing",
       "source": "./",
-      "description": "去除中文文本中的AI味,让文字读起来像真人写的。",
+      "description": "改写中文技术文档和代码注释，去掉 AI 生造词和工程黑话，同时保留正式技术术语。",
       "license": "MIT",
-      "keywords": ["writing", "editing", "ai-detection", "humanize", "prose", "style", "chinese", "中文", "去AI味"]
+      "keywords": ["technical-writing", "code-comments", "documentation", "humanize", "engineering", "chinese", "中文", "去AI味"]
     }
   ]
 }
