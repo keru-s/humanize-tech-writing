@@ -6,9 +6,9 @@ Guidance for AI coding agents working in this repository.
 
 `humanize-tech-writing` is a portable Agent Skill for **Chinese technical writing**. It edits project documentation and code comments to remove AI-coined terminology, vague abstraction, translationese, canned AI phrasing, and low-value comments while preserving technical meaning.
 
-The repository is intentionally narrower than upstream `humanizer-chinese`. It is designed for engineering artifacts such as README files, design docs, ADR/RFC content, JavaDoc/docstrings, API/configuration docs, code comments, and change-oriented technical docs.
+The repository is intentionally narrower than upstream `humanizer-chinese`. It is designed for engineering artifacts such as README files, design docs, ADR/RFC content, API and documentation comments, API/configuration docs, inline/block comments, and change-oriented technical docs.
 
-The runtime artifact is `SKILL.md`. There is no build step.
+The runtime Skill package lives under `skills/humanize-tech-writing/`. There is no build step.
 
 ## Product priorities
 
@@ -24,9 +24,9 @@ Style improvements must not weaken the first three items.
 
 ## Key files
 
-- `SKILL.md` — source of truth for Skill behavior.
+- `skills/humanize-tech-writing/SKILL.md` — source of truth for Skill behavior.
+- `skills/humanize-tech-writing/agents/openai.yaml` — OpenAI Agent Skills display metadata bundled with the Skill.
 - `README.md` — user-facing scope, examples, installation, usage, and version history.
-- `agents/openai.yaml` — OpenAI Agent Skills display metadata.
 - `.claude-plugin/plugin.json` — Claude Code plugin manifest.
 - `.claude-plugin/marketplace.json` — Claude Code marketplace entry.
 - `scripts/validate-package.py` — dependency-free repository consistency checks.
@@ -34,13 +34,13 @@ Style improvements must not weaken the first three items.
 
 ## Maintenance contract
 
-`SKILL.md`, `README.md`, Agent metadata, and plugin metadata must stay consistent.
+`skills/humanize-tech-writing/SKILL.md`, `README.md`, Agent metadata, and plugin metadata must stay consistent.
 
 ### Version
 
 The current version must match in:
 
-- `SKILL.md` → `metadata.version`
+- `skills/humanize-tech-writing/SKILL.md` → `metadata.version`
 - `README.md` → newest entry in `版本历史`
 - `.claude-plugin/plugin.json` → `version`
 
@@ -93,7 +93,7 @@ Prefer terminology in this order:
 Do not apply one comment rule to every technical artifact.
 
 - README / ADR / RFC / design docs: behavior, constraints, decisions, trade-offs, supported rationale.
-- JavaDoc / docstring / API docs: public contract, parameters, returns, exceptions, nullability, units, side effects, thread-safety, blocking, ordering, lifecycle, boundaries as needed.
+- API or documentation comments: public contract, parameters, returns, exceptions, nullability, units, side effects, thread-safety, blocking, ordering, lifecycle, and boundaries as needed. This includes JavaDoc, docstrings, JSDoc/TSDoc, KDoc, Rust doc comments, Go declaration comments, C# XML docs, and equivalent forms in other languages.
 - Inline / block comments: non-obvious constraints, invariants, compatibility, concurrency/ordering, supported rationale, workaround conditions.
 - PR / changelog / migration docs: change history is expected and useful.
 
@@ -110,7 +110,7 @@ The Skill is intended to run repeatedly in coding agents. Avoid diff noise:
 
 ## Prompt design
 
-Keep `SKILL.md` compact enough that the model can identify the important rules quickly. Prefer a small number of clear sections such as:
+Keep `skills/humanize-tech-writing/SKILL.md` compact enough that the model can identify the important rules quickly. Prefer a small number of clear sections such as:
 
 1. scope
 2. priority
@@ -133,13 +133,13 @@ Recommended snippet:
 ```md
 ## Technical writing
 
-When creating or modifying Chinese technical documentation, JavaDoc/docstrings,
-or code comments, use the `humanize-tech-writing` skill before finishing.
+When creating or modifying Chinese technical documentation or code comments,
+including API/documentation comments, use the `humanize-tech-writing` skill before finishing.
 
 Preserve technical meaning, identifiers, literals, and established project terminology.
 ```
 
-Recommended Codex layout:
+Recommended Codex layout after installation:
 
 ```text
 .agents/skills/humanize-tech-writing/SKILL.md
@@ -156,6 +156,8 @@ python3 scripts/validate-package.py
 npx skills add . --list
 claude plugin validate .
 ```
+
+`npx skills add . --list` should discover `skills/humanize-tech-writing/SKILL.md` as the installable Skill rather than treating the repository root as the Skill package.
 
 ## Upstream attribution
 
