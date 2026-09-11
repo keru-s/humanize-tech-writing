@@ -1,4 +1,4 @@
 interface:
-  display_name: "Humanizer Chinese"
-  short_description: "去除中文文本中的AI写作痕迹"
-  default_prompt: "用 $humanizer-chinese 去掉这段中文的AI味,保留原意和事实。"
+  display_name: "Humanize Tech Writing"
+  short_description: "让中文技术文档和代码注释更直接、自然，并保护技术语义"
+  default_prompt: "用 $humanize-tech-writing 检查这段中文技术文字：去掉明显的 AI 生造表达和空泛黑话，保留事实、正式术语、项目契约和强弱语义，不补写未知实现。"

@@ -1,14 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
-  "name": "humanizer-chinese",
-  "description": "去除中文文本中的AI味,让文字读起来像真人写的。识别并修复中文AI写作模式:模板化结构、AI高频词、排比堆砌、升华结尾等。",
-  "version": "1.0.0",
+  "name": "humanize-tech-writing",
+  "description": "改写中文技术文档和代码注释，减少 AI 生造词、空泛工程黑话和模板化表达，同时保护事实、正式术语、项目契约和强弱语义。",
+  "version": "2.1.0",
   "author": {
-    "name": "jiji262",
-    "url": "https://github.com/jiji262"
+    "name": "keru-s",
+    "url": "https://github.com/keru-s"
   },
-  "homepage": "https://github.com/jiji262/humanizer-chinese",
-  "repository": "https://github.com/jiji262/humanizer-chinese",
+  "homepage": "https://github.com/keru-s/humanize-tech-writing",
+  "repository": "https://github.com/keru-s/humanize-tech-writing",
   "license": "MIT",
-  "keywords": ["writing", "editing", "ai-detection", "humanize", "prose", "style", "chinese", "中文", "去AI味"]
+  "keywords": ["technical-writing", "code-comments", "documentation", "humanize", "engineering", "chinese", "中文", "去AI味"]
 }

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate Humanizer Chinese's portable package surfaces without external dependencies."""
+"""Validate Humanize Tech Writing repository consistency without external dependencies."""
 
 from __future__ import annotations
 
@@ -12,6 +12,10 @@ ROOT = Path(__file__).resolve().parent.parent
 SKILL = (ROOT / "SKILL.md").read_text()
 README = (ROOT / "README.md").read_text()
 PLUGIN = json.loads((ROOT / ".claude-plugin" / "plugin.json").read_text())
+MARKETPLACE = json.loads((ROOT / ".claude-plugin" / "marketplace.json").read_text())
+OPENAI = (ROOT / "agents" / "openai.yaml").read_text()
+
+CANONICAL_NAME = "humanize-tech-writing"
 
 
 def require(match: re.Match[str] | None, message: str) -> re.Match[str]:
@@ -25,9 +29,12 @@ frontmatter = require(
     "SKILL.md must start with YAML frontmatter",
 ).group(1)
 
-for nonportable_key in ("compatibility:", "allowed-tools:"):
-    if re.search(rf"(?m)^{re.escape(nonportable_key)}", frontmatter):
-        raise SystemExit(f"Remove nonportable frontmatter key: {nonportable_key[:-1]}")
+skill_name = require(
+    re.search(r"(?m)^name:\s*([^\s]+)\s*$", frontmatter),
+    "SKILL.md name is missing",
+).group(1)
+if skill_name != CANONICAL_NAME:
+    raise SystemExit(f"Expected skill name {CANONICAL_NAME!r}, found {skill_name!r}")
 
 skill_version = require(
     re.search(r'(?m)^\s+version:\s*["\']([^"\']+)["\']\s*$', frontmatter),
@@ -42,22 +49,20 @@ versions = {skill_version, readme_version, str(PLUGIN.get("version", ""))}
 if len(versions) != 1:
     raise SystemExit(f"Version mismatch: {sorted(versions)}")
 
-PATTERN_COUNT = 36
+if PLUGIN.get("name") != CANONICAL_NAME:
+    raise SystemExit("plugin.json name does not match the canonical skill name")
 
-pattern_numbers = [
-    int(number)
-    for number in re.findall(r"(?m)^### ([0-9]+)\. ", SKILL)
-]
-if pattern_numbers != list(range(1, PATTERN_COUNT + 1)):
-    raise SystemExit(f"Expected patterns 1-{PATTERN_COUNT}, found {pattern_numbers}")
+if MARKETPLACE.get("name") != CANONICAL_NAME:
+    raise SystemExit("marketplace.json name does not match the canonical skill name")
 
-readme_numbers = {
-    int(number) for number in re.findall(r"(?m)^\| ([0-9]+) \|", README)
-}
-if readme_numbers != set(range(1, PATTERN_COUNT + 1)):
-    raise SystemExit(f"README pattern table must contain patterns 1-{PATTERN_COUNT}")
+plugins = MARKETPLACE.get("plugins", [])
+if len(plugins) != 1 or plugins[0].get("name") != CANONICAL_NAME:
+    raise SystemExit("marketplace plugin entry does not match the canonical skill name")
 
-if len(SKILL.splitlines()) > 500:
-    raise SystemExit("SKILL.md exceeds the 500-line portability budget")
+if f"${CANONICAL_NAME}" not in OPENAI:
+    raise SystemExit("agents/openai.yaml default prompt must reference the canonical skill name")
 
-print(f"Humanizer Chinese package v{skill_version} is valid")
+if len(SKILL.splitlines()) > 300:
+    raise SystemExit("SKILL.md exceeds the 300-line prompt budget")
+
+print(f"Humanize Tech Writing package v{skill_version} is internally consistent")
